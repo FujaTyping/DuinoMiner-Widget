@@ -1,0 +1,22 @@
+{
+  "name": "duinominerwidget",
+  "version": "1.0.0",
+  "description": "A duinominer widget using node.js in kde",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FujaTyping/DuinoMiner-Widget.git"
+  },
+  "author": "FujaTyping",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FujaTyping/DuinoMiner-Widget/issues"
+  },
+  "homepage": "https://github.com/FujaTyping/DuinoMiner-Widget#readme",
+  "dependencies": {
+    "axios": "^1.6.8"
+  }
+}
