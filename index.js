@@ -29,7 +29,11 @@ axios.get(`https://${endpoint}/miners/${username}`)
 axios.get(`https://${endpoint}/users/${username}`)
     .then(function (response) {
         let rawdata = response.data
-        console.log(`======== DuinoMiner Status : ${rawdata.result.balance.username} ========\n◈ Balance : ${rawdata.result.balance.balance} (DUCO)\n◈ DUCO Price : ${IsUndefined(duinoprice, 'Price')}\n◈ Lastet fetch : ${GetTime()}\n◈ Miner : ${rawdata.result.miners.length}/${rawdata.result.balance.max_miners} (Rig)\n${IsUndefined(minerslog, 'Miners')}`);
+        if (rawdata.success == false) {
+            console.log(`======== DuinoMiner Status : USER ========\n◈ Please check that user is exist (${username})`)
+        } else {
+            console.log(`======== DuinoMiner Status : ${rawdata.result.balance.username} ========\n◈ Balance : ${rawdata.result.balance.balance} (DUCO)\n◈ DUCO Price : ${IsUndefined(duinoprice, 'Price')}\n◈ Lastet fetch : ${GetTime()}\n◈ Miner : ${rawdata.result.miners.length}/${rawdata.result.balance.max_miners} (Rig)\n${IsUndefined(minerslog, 'Miners')}`);
+        }
     })
     .catch(function (error) {
         console.log(`Api error : ${error}`);
