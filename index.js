@@ -3,6 +3,7 @@ const { username, endpoint } = require('./config.json');
 let minersdata;
 let minerslog;
 let duinoprice;
+let minerserver;
 
 axios.get(`https://${endpoint}/api.json`)
     .then(function (response) {
@@ -13,7 +14,8 @@ axios.get(`https://${endpoint}/api.json`)
         console.log(`Api error : ${error}`);
     })
 
-axios.get(`https://${endpoint}/miners/${username}`)
+/*
+    axios.get(`https://${endpoint}/miners/${username}`)
     .then(function (response) {
         if (response.data.hasOwnProperty('result')) {
             minersdata = response.data.result
@@ -25,14 +27,21 @@ axios.get(`https://${endpoint}/miners/${username}`)
     .catch(function (error) {
         console.log(`Api error : ${error}`);
     })
+*/
 
 axios.get(`https://${endpoint}/users/${username}`)
     .then(function (response) {
-        let rawdata = response.data
-        if (rawdata.success == false) {
-            console.log(`======== DuinoMiner Status : USER ========\n◈ Please check that user is exist (${username})`)
+        let rawdata = response.data.result
+        let checkdata = response.data
+        if (checkdata.success == false) {
+            console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Please check that user is exist (${username})\n◈ Please update your config in config.json`)
         } else {
-            console.log(`======== DuinoMiner Status : ${rawdata.result.balance.username} ========\n◈ Balance : ${rawdata.result.balance.balance} (DUCO)\n◈ DUCO Price : ${IsUndefined(duinoprice, 'Price')}\n◈ Lastet fetch : ${GetTime()}\n◈ Miner : ${rawdata.result.miners.length}/${rawdata.result.balance.max_miners} (Rig)\n${IsUndefined(minerslog, 'Miners')}`);
+            if (rawdata.miners.length === 0) {
+                minerslog = '➥ All miner is offline'
+            } else {
+                minerslog = ObjectMinerData(rawdata.miners);
+            }
+            console.log(`===========【⛏️ DuinoMiner : ${rawdata.balance.username}】===========\n◈ Balance : ${rawdata.balance.balance} (DUCO)\n◈ DUCO Price : ${IsUndefined(duinoprice, 'Price')}\n◈ Lastet fetch : ${GetTime()}\n◈ Miner : ${rawdata.miners.length}/${rawdata.balance.max_miners} (${IsUndefined(minerserver, 'Server')})\n${IsUndefined(minerslog, 'Miners')}`);
         }
     })
     .catch(function (error) {
@@ -42,9 +51,16 @@ axios.get(`https://${endpoint}/users/${username}`)
 function ObjectMinerData(RawData) {
     let log = '';
 
-    RawData.forEach(logs => {
-        log += `➥ ${logs.identifier} : ${logs.hashrate} ${HashRate(logs.hashrate)} (${logs.accepted}) | Difficulty [${logs.diff}]\n`;
+    RawData.forEach((logs, index) => {
+        if (index < RawData.length - 1) {
+            log += `➥ ${logs.identifier} : ${logs.hashrate} ${HashRate(logs.hashrate)} (${logs.accepted}) | Difficulty [${logs.diff}]\n`;
+            minerserver = `${logs.pool}`;
+        } else {
+            log += `➥ ${logs.identifier} : ${logs.hashrate} ${HashRate(logs.hashrate)} (${logs.accepted}) | Difficulty [${logs.diff}]`;
+            minerserver = `${logs.pool}`;
+        }
     });
+
 
     return log;
 }
@@ -55,6 +71,8 @@ function IsUndefined(Object, Action) {
             return `➥ ${Action} status not available or ${Action} is offline`
         } else if (Action == "Price") {
             return 'Not available'
+        } else if (Action == "Server") {
+            return 'Offline'
         }
     } else {
         return Object
