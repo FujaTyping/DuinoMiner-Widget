@@ -1,4 +1,6 @@
 {
     "username": "YOUR_USERNAME",
-    "endpoint": "server.duinocoin.com"
+    "endpoint": "server.duinocoin.com",
+    "soloaddress": "YOUR_ADDERSS",
+    "soloendpoint": "public-pool.io:40557/api/client/"
 }
