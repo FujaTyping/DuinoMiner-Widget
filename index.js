@@ -4,14 +4,17 @@ let minersdata;
 let minerslog;
 let duinoprice;
 let minerserver;
+let serverstatus;
 
-axios.get(`https://${endpoint}/api.json`)
+axios.get(`https://${endpoint}/api.json`, { timeout: 5000 })
     .then(function (response) {
         let rawdata = response.data
         duinoprice = `$${rawdata['Duco price']}`
     })
     .catch(function (error) {
-        console.log(`Api error : ${error}`);
+        duinoprice = `Not available`
+        //serverstatus = error.response.status
+        //console.log(`Api error : ${error}`);
     })
 
 /*
@@ -29,12 +32,12 @@ axios.get(`https://${endpoint}/api.json`)
     })
 */
 
-axios.get(`https://${endpoint}/users/${username}`)
+axios.get(`https://${endpoint}/users/${username}`, { timeout: 5000 })
     .then(function (response) {
         let rawdata = response.data.result
         let checkdata = response.data
         if (checkdata.success == false) {
-            console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Please check that user is exist (${username})\n◈ Please update your config in config.json`)
+            console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Please check that user is exist (${username})\n◈ Please update your config in config.json\n◈ Lastest check : ${GetTime()}`)
         } else {
             if (rawdata.miners.length === 0) {
                 minerslog = '➥ All miner is offline'
@@ -45,7 +48,8 @@ axios.get(`https://${endpoint}/users/${username}`)
         }
     })
     .catch(function (error) {
-        console.log(`Api error : ${error}`);
+        console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Api error : ${error.code}\n◈ Status code : 408\n◈ Lastest check : ${GetTime()}`)
+        //console.log(`Api error : ${error}`);
     })
 
 function ObjectMinerData(RawData) {
