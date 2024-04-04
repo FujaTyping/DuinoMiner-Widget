@@ -48,7 +48,7 @@ axios.get(`https://${endpoint}/users/${username}`, { timeout: 10000 })
         }
     })
     .catch(function (error) {
-        console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Api error : ${error.code}\n◈ Status code : 408\n◈ Lastest check : ${GetTime()}`)
+        console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Api error : ${error.code}\n◈ Reason : ${error.message}\n◈ Lastest check : ${GetTime()}`)
         //console.log(`Api error : ${error}`);
     })
 

@@ -13,7 +13,7 @@ axios.get(`https://${soloendpoint}${soloaddress}`, { timeout: 15000 })
         }
     })
     .catch(function (error) {
-        console.log(`============【⛏️ Solo Miner (Public-pool)】============\n◈ Api error : ${error.code}\n◈ Status code : 408\n◈ Lastest check : ${GetTime()}`)
+        console.log(`============【⛏️ Solo Miner (Public-pool)】============\n◈ Api error : ${error.code}\n◈ Reason : ${error.message}\n◈ Lastest check : ${GetTime()}`)
         //console.log(`Api error : ${error}`);
     })
 

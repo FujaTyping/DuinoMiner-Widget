@@ -1,6 +1,6 @@
 {
-    "username": "YOUR_USERNAME",
+    "username": "FujaTyping",
     "endpoint": "server.duinocoin.com",
-    "soloaddress": "YOUR_ADDERSS",
+    "soloaddress": "bc1qfal8uz3qng0fx2tn633h92fjflfw7jfjq5nymm",
     "soloendpoint": "public-pool.io:40557/api/client/"
 }
