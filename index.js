@@ -6,7 +6,7 @@ let duinoprice;
 let minerserver;
 let serverstatus;
 
-axios.get(`https://${endpoint}/api.json`, { timeout: 5000 })
+axios.get(`https://${endpoint}/api.json`, { timeout: 10000 })
     .then(function (response) {
         let rawdata = response.data
         duinoprice = `$${rawdata['Duco price']}`
@@ -32,7 +32,7 @@ axios.get(`https://${endpoint}/api.json`, { timeout: 5000 })
     })
 */
 
-axios.get(`https://${endpoint}/users/${username}`, { timeout: 5000 })
+axios.get(`https://${endpoint}/users/${username}`, { timeout: 10000 })
     .then(function (response) {
         let rawdata = response.data.result
         let checkdata = response.data
@@ -48,7 +48,7 @@ axios.get(`https://${endpoint}/users/${username}`, { timeout: 5000 })
         }
     })
     .catch(function (error) {
-        console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Api error : ${error.code}\n◈ Status code : 408\n◈ Lastest check : ${GetTime()}`)
+        console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Api error : ${error}\n◈ Status code : 408\n◈ Lastest check : ${GetTime()}`)
         //console.log(`Api error : ${error}`);
     })
 
@@ -57,10 +57,10 @@ function ObjectMinerData(RawData) {
 
     RawData.forEach((logs, index) => {
         if (index < RawData.length - 1) {
-            log += `➥ ${logs.identifier} : ${logs.hashrate} ${HashRate(logs.hashrate)} (${logs.accepted}) | Difficulty [${logs.diff}]\n`;
+            log += `➥ ${logs.identifier} : ${HashRate(logs.hashrate)} (${logs.accepted}) | Difficulty [${logs.diff}]\n`;
             minerserver = `${logs.pool}`;
         } else {
-            log += `➥ ${logs.identifier} : ${logs.hashrate} ${HashRate(logs.hashrate)} (${logs.accepted}) | Difficulty [${logs.diff}]`;
+            log += `➥ ${logs.identifier} : ${HashRate(logs.hashrate)} (${logs.accepted}) | Difficulty [${logs.diff}]`;
             minerserver = `${logs.pool}`;
         }
     });
@@ -95,8 +95,8 @@ function GetTime() {
 
 function HashRate(Rate) {
     if (Number.isInteger(Rate)) {
-        return 'KH/s'
+        return `${Rate / 1000} KH/s`
     } else {
-        return 'H/s'
+        return `${Rate} H/s`
     }
 }

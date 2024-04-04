@@ -2,7 +2,7 @@ const axios = require('axios');
 const { soloaddress, soloendpoint } = require('../config.json');
 let minerslog;
 
-axios.get(`https://${soloendpoint}${soloaddress}`, { timeout: 5000 })
+axios.get(`https://${soloendpoint}${soloaddress}`, { timeout: 15000 })
     .then(function (response) {
         let rawdata = response.data
         if (rawdata.workersCount == 0) {
