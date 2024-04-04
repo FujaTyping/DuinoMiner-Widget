@@ -9,7 +9,7 @@ let serverstatus;
 axios.get(`https://${endpoint}/api.json`, { timeout: 10000 })
     .then(function (response) {
         let rawdata = response.data
-        duinoprice = `$${rawdata['Duco price']}`
+        duinoprice = `${rawdata['Duco price']}`
     })
     .catch(function (error) {
         duinoprice = `Not available`
@@ -44,11 +44,11 @@ axios.get(`https://${endpoint}/users/${username}`, { timeout: 10000 })
             } else {
                 minerslog = ObjectMinerData(rawdata.miners);
             }
-            console.log(`===========【⛏️ DuinoMiner : ${rawdata.balance.username}】===========\n◈ Balance : ${rawdata.balance.balance} (DUCO)\n◈ DUCO Price : ${IsUndefined(duinoprice, 'Price')}\n◈ Lastet fetch : ${GetTime()}\n◈ Miner : ${rawdata.miners.length}/${rawdata.balance.max_miners} (${IsUndefined(minerserver, 'Server')})\n${IsUndefined(minerslog, 'Miners')}`);
+            console.log(`===========【⛏️ DuinoMiner : ${rawdata.balance.username}】===========\n◈ Balance : ᕲ ${rawdata.balance.balance.toFixed(12)} (${IsUndefined((rawdata.balance.balance * duinoprice).toFixed(4), 'Balance')})\n◈ DUCO Price : ${IsUndefined(duinoprice, 'Price')}\n◈ Lastet fetch : ${GetTime()}\n◈ Miner : ${rawdata.miners.length}/${rawdata.balance.max_miners} (${IsUndefined(minerserver, 'Server')})\n${IsUndefined(minerslog, 'Miners')}`);
         }
     })
     .catch(function (error) {
-        console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Api error : ${error}\n◈ Status code : 408\n◈ Lastest check : ${GetTime()}`)
+        console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Api error : ${error.code}\n◈ Status code : 408\n◈ Lastest check : ${GetTime()}`)
         //console.log(`Api error : ${error}`);
     })
 
@@ -70,15 +70,22 @@ function ObjectMinerData(RawData) {
 }
 
 function IsUndefined(Object, Action) {
-    if (Object === undefined || Object == "undefined") {
+    if (Object === undefined || Object == "undefined" || Object === NaN || Object == "NaN") {
         if (Action == "Miners") {
             return `➥ ${Action} status not available or ${Action} is offline`
         } else if (Action == "Price") {
             return 'Not available'
         } else if (Action == "Server") {
             return 'Offline'
+        } else if (Action == "Balance") {
+            return 'Calculating'
         }
     } else {
+        if (Action == "Price") {
+            return `$${Object}`
+        } else if (Action == "Balance") {
+            return `~ $${Object}`
+        }
         return Object
     }
 }
