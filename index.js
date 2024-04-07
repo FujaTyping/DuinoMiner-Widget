@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { username, endpoint } = require('./config.json');
+const { username, endpoint, backupendpoint, showminers } = require('./config.json');
 let minersdata;
 let minerslog;
 let duinoprice;
@@ -41,6 +41,8 @@ axios.get(`https://${endpoint}/users/${username}`, { timeout: 10000 })
         } else {
             if (rawdata.miners.length === 0) {
                 minerslog = '➥ All miner is offline'
+            } else if (showminers == false) {
+                minerslog = '➥ Show miners disable'
             } else {
                 minerslog = ObjectMinerData(rawdata.miners);
             }
@@ -57,10 +59,10 @@ function ObjectMinerData(RawData) {
 
     RawData.forEach((logs, index) => {
         if (index < RawData.length - 1) {
-            log += `➥ ${logs.identifier} : ${HashRate(logs.hashrate)} (${logs.accepted}) | Difficulty [${logs.diff}]\n`;
+            log += `➥ ${logs.identifier} : ${RateCount(logs.hashrate, 'Hash')} (${logs.accepted}) | Difficulty [${RateCount(logs.diff, 'Difficulty')}]\n`;
             minerserver = `${logs.pool}`;
         } else {
-            log += `➥ ${logs.identifier} : ${HashRate(logs.hashrate)} (${logs.accepted}) | Difficulty [${logs.diff}]`;
+            log += `➥ ${logs.identifier} : ${RateCount(logs.hashrate, 'Hash')} (${logs.accepted}) | Difficulty [${RateCount(logs.diff, 'Difficulty')}]`;
             minerserver = `${logs.pool}`;
         }
     });
@@ -75,6 +77,8 @@ function IsUndefined(Object, Action) {
             return `➥ ${Action} status not available or ${Action} is offline`
         } else if (Action == "Price") {
             return 'Not available'
+        } else if (Action == "Server" && showminers == false) {
+            return 'Disable'
         } else if (Action == "Server") {
             return 'Offline'
         } else if (Action == "Balance") {
@@ -100,10 +104,18 @@ function GetTime() {
     return `${Hour}:${Minutes}:${Seconds}`
 }
 
-function HashRate(Rate) {
-    if (Number.isInteger(Rate)) {
-        return `${Rate / 1000} KH/s`
-    } else {
-        return `${Rate} H/s`
+function RateCount(Rate, Action) {
+    if (Action == 'Hash') {
+        if (parseInt(Rate) >= 1000) {
+            return `${Rate / 1000} KH/s`
+        } else {
+            return `${Rate} H/s`
+        }
+    } else if (Action == 'Difficulty') {
+        if (Rate >= 1000) {
+            return `${Rate / 1000}k`
+        } else {
+            return `${Rate}`
+        }
     }
 }

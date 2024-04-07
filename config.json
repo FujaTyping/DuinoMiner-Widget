@@ -1,6 +1,8 @@
 {
-    "username": "YOURUSERNAME",
+    "username": "YOUR_USERNAME",
     "endpoint": "server.duinocoin.com",
-    "soloaddress": "YOURADDRESS",
+    "backupendpoint": "server2.duinocoin.com",
+    "showminers": true,
+    "soloaddress": "YOUR_ADDRESS",
     "soloendpoint": "public-pool.io:40557/api/client/"
 }
