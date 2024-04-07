@@ -5,8 +5,11 @@ let minerslog;
 let duinoprice;
 let minerserver;
 let serverstatus;
+let totalhashrate;
 
-axios.get(`https://${endpoint}/api.json`, { timeout: 10000 })
+console.log(`◈ Fetching data from server (${endpoint})`)
+
+axios.get(`https://${endpoint}/api.json`, { timeout: 15000 })
     .then(function (response) {
         let rawdata = response.data
         duinoprice = `${rawdata['Duco price']}`
@@ -32,11 +35,12 @@ axios.get(`https://${endpoint}/api.json`, { timeout: 10000 })
     })
 */
 
-axios.get(`https://${endpoint}/users/${username}`, { timeout: 10000 })
+axios.get(`https://${endpoint}/users/${username}`, { timeout: 15000 })
     .then(function (response) {
         let rawdata = response.data.result
         let checkdata = response.data
         if (checkdata.success == false) {
+            console.clear();
             console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Please check that user is exist (${username})\n◈ Please update your config in config.json\n◈ Lastest check : ${GetTime()}`)
         } else {
             if (rawdata.miners.length === 0) {
@@ -46,40 +50,47 @@ axios.get(`https://${endpoint}/users/${username}`, { timeout: 10000 })
             } else {
                 minerslog = ObjectMinerData(rawdata.miners);
             }
-            console.log(`===========【⛏️ DuinoMiner : ${rawdata.balance.username}】===========\n◈ Balance : ᕲ ${rawdata.balance.balance.toFixed(12)} (${IsUndefined((rawdata.balance.balance * duinoprice).toFixed(4), 'Balance')})\n◈ DUCO Price : ${IsUndefined(duinoprice, 'Price')}\n◈ Lastet fetch : ${GetTime()}\n◈ Miner : ${rawdata.miners.length}/${rawdata.balance.max_miners} (${IsUndefined(minerserver, 'Server')})\n${IsUndefined(minerslog, 'Miners')}`);
+            console.clear();
+            console.log(`===========【⛏️ DuinoMiner : ${rawdata.balance.username}】===========\n◈ Balance : ᕲ ${rawdata.balance.balance.toFixed(12)} (${IsUndefined((rawdata.balance.balance * duinoprice).toFixed(4), 'Balance')})\n◈ DUCO Price : ${IsUndefined(duinoprice, 'Price')}\n◈ Stake : ᕲ ${rawdata.balance.stake_amount}\n◈ Lastet fetch : ${GetTime()}\n◈ Miner : ${rawdata.miners.length}/${rawdata.balance.max_miners} (${IsUndefined(totalhashrate, 'Hashrate')})\n${IsUndefined(minerslog, 'Miners')}`);
         }
     })
     .catch(function (error) {
+        console.clear();
         console.log(`===========【⛏️ DuinoMiner : USER】===========\n◈ Api error : ${error.code}\n◈ Reason : ${error.message}\n◈ Lastest check : ${GetTime()}`)
         //console.log(`Api error : ${error}`);
     })
 
 function ObjectMinerData(RawData) {
     let log = '';
+    totalhashrate = 0;
 
     RawData.forEach((logs, index) => {
         if (index < RawData.length - 1) {
             log += `➥ ${logs.identifier} : ${RateCount(logs.hashrate, 'Hash')} (${logs.accepted}) | Difficulty [${RateCount(logs.diff, 'Difficulty')}]\n`;
             minerserver = `${logs.pool}`;
+            totalhashrate = totalhashrate + logs.hashrate
         } else {
             log += `➥ ${logs.identifier} : ${RateCount(logs.hashrate, 'Hash')} (${logs.accepted}) | Difficulty [${RateCount(logs.diff, 'Difficulty')}]`;
             minerserver = `${logs.pool}`;
+            totalhashrate = totalhashrate + logs.hashrate
         }
     });
 
-
+    totalhashrate = `~ ${RateCount(totalhashrate, 'Hash')}`
     return log;
 }
 
 function IsUndefined(Object, Action) {
+    if (Action == "Hashrate" && showminers == false) {
+        return 'Disable'
+    }
+
     if (Object === undefined || Object == "undefined" || Object === NaN || Object == "NaN") {
         if (Action == "Miners") {
             return `➥ ${Action} status not available or ${Action} is offline`
         } else if (Action == "Price") {
             return 'Not available'
-        } else if (Action == "Server" && showminers == false) {
-            return 'Disable'
-        } else if (Action == "Server") {
+        } else if (Action == "Hashrate") {
             return 'Offline'
         } else if (Action == "Balance") {
             return 'Calculating'
