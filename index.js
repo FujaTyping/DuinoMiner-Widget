@@ -6,6 +6,7 @@ let duinoprice;
 let minerserver;
 let serverstatus;
 let totalhashrate;
+let totalhashratesec;
 
 console.log(`◈ Fetching data from server (${endpoint})`)
 
@@ -76,7 +77,8 @@ function ObjectMinerData(RawData) {
         }
     });
 
-    totalhashrate = `~ ${RateCount(totalhashrate, 'Hash')}`
+    totalhashratesec = RateCount(totalhashrate, 'Hash', false)
+    totalhashrate = `~ ${parseFloat(RateCount(totalhashrate, 'Hash')).toFixed(2)} ${totalhashratesec}`
     return log;
 }
 
@@ -115,12 +117,20 @@ function GetTime() {
     return `${Hour}:${Minutes}:${Seconds}`
 }
 
-function RateCount(Rate, Action) {
+function RateCount(Rate, Action, Opt) {
     if (Action == 'Hash') {
-        if (parseInt(Rate) >= 1000) {
-            return `${Rate / 1000} KH/s`
+        if (Opt == false) {
+            if (parseInt(Rate) >= 1000) {
+                return `KH/s`
+            } else {
+                return `H/s`
+            }
         } else {
-            return `${Rate} H/s`
+            if (parseInt(Rate) >= 1000) {
+                return `${Rate / 1000} KH/s`
+            } else {
+                return `${Rate} H/s`
+            }
         }
     } else if (Action == 'Difficulty') {
         if (Rate >= 1000) {
